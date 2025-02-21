@@ -3,6 +3,10 @@
 #include <thread>
 
 std::atomic<int> count(0);
+std::mutex m;
+std::atomic<int> init_count(0);
+std::atomic<int> destroy_count(0);
+std::atomic<int> copy_count(0);
 
 template <typename T> struct SharedPtr4 {
 private:
@@ -11,17 +15,17 @@ private:
 
 public:
   SharedPtr4(T *ptr) : m_count(new std::atomic<size_t>(1)), m_ptr(ptr) {
-    std::cout << "Initialized\n";
+    ++init_count;
   }
 
   SharedPtr4(const SharedPtr4 &other)
       : m_count(other.m_count), m_ptr(other.m_ptr) {
-    std::cout << "Copied\n";
+    ++copy_count;
     m_count->fetch_add(1, std::memory_order::relaxed);
   }
 
   ~SharedPtr4() {
-    std::cout << "Destroyed\n";
+    ++destroy_count;
     size_t old_count = m_count->fetch_sub(1, std::memory_order::acq_rel);
     if (old_count == 1) {
       delete m_ptr;
@@ -68,7 +72,7 @@ void copy_into_thread_by_ref(int k,
          // Difference 2 of 2
          const SharedPtr4<int> &ptr) {
         copy_into_thread_by_ref(k, ptr);
-        ++count;
+        count.fetch_add(1, std::memory_order::release);
       },
       k - 1,
       // Note:            ptr is still being copied here.
@@ -88,4 +92,8 @@ int main() {
   }
   while (count != 2)
     ;
+
+  std::cout << "init_count: " << init_count << std::endl;
+  std::cout << "destroy_count: " << destroy_count << std::endl;
+  std::cout << "copy_count: " << copy_count << std::endl;
 }

@@ -3,15 +3,15 @@ CXXFLAGS = -std=c++26 -Wall -Wextra -Wpedantic -Wconversion -Werror -O3 -fsaniti
 
 TARGETS = release-sequence shared-ptr-thread-args-copied
 SOURCES_REL_SEQ = release-sequence.cc
-SOURCES_SHARE_PTR = shared-ptr-thread-args-copied.cc
+SOURCES_SHARED_PTR = shared-ptr-thread-args-copied.cc
 
 all: $(TARGETS)
 
 release-sequence: $(SOURCES_REL_SEQ)
 	$(CXX) -o $@ $(SOURCES_REL_SEQ) $(CXXFLAGS)
 
-shared-ptr-thread-args-copied: $(SOURCES_SHARE_PTR)
-	$(CXX) -o $@ $(SOURCES_SHARE_PTR) $(CXXFLAGS)
+shared-ptr-thread-args-copied: $(SOURCES_SHARED_PTR)
+	$(CXX) -o $@ $(SOURCES_SHARED_PTR) $(CXXFLAGS)
 
 clean:
 	rm -f $(TARGETS)
