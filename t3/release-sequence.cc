@@ -33,6 +33,7 @@ void thread_3() {
 
   // Question part 2 of 2: ...will this assertion fire?
   //                       If not, what can we do to make it pass?
+  //                       Also, are there data races wrt x?
   // assert(x == 2);
 }
 
